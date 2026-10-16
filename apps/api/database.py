@@ -39,6 +39,7 @@ async def init_db() -> None:
     """Initialize database tables (useful for development and test environments)."""
     async with engine.begin() as conn:
         import apps.api.models  # noqa: F401
+
         await conn.run_sync(Base.metadata.create_all)
 
 
