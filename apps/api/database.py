@@ -35,6 +35,13 @@ class Base(DeclarativeBase):
     pass
 
 
+async def init_db() -> None:
+    """Initialize database tables (useful for development and test environments)."""
+    async with engine.begin() as conn:
+        import apps.api.models  # noqa: F401
+        await conn.run_sync(Base.metadata.create_all)
+
+
 async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     """Dependency for providing tenant-scoped or transactional DB sessions."""
     async with AsyncSessionLocal() as session:

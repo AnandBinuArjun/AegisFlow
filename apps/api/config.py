@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     API_PORT: int = Field(default=8000)
 
     # CORS Allowlist (Explicit origins only - wildcards rejected if credentials enabled)
-    CORS_ALLOWED_ORIGINS: List[str] = Field(
+    CORS_ALLOWED_ORIGINS: Union[List[str], str] = Field(
         default=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"]
     )
 

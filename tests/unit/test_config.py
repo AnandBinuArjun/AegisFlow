@@ -6,7 +6,7 @@ from apps.api.config import Settings
 
 def test_settings_default_secure():
     """Verify default settings provide secure defaults."""
-    settings = Settings()
+    settings = Settings(_env_file=None)
     assert settings.ENVIRONMENT == "development"
     assert settings.LLM_PROVIDER == "mock"
     assert settings.DEVELOPMENT_AUTH_MODE is False
