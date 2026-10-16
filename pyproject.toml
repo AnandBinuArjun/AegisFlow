@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=65.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aegisflow"
+version = "0.1.0"
+description = "AI-Native Application Security Platform"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "AegisFlow Security Engineering Team" }]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "node_modules",
+    "dist",
+    "build",
+    "migrations/versions",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "S",   # flake8-bandit (security checks!)
+    "C4",  # flake8-comprehensions
+]
+ignore = [
+    "S101", # allow assert in tests
+    "B008", # allow Depends() in FastAPI function parameter defaults
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106"] # allow synthetic credentials/tokens in test files
+"fixtures/**" = ["S105", "S106"]
+"apps/api/routes/auth.py" = ["S105", "S106"]
+

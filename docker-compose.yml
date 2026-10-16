@@ -1,0 +1,66 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: aegisflow-api
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=INFO
+      - DATABASE_URL=postgresql+asyncpg://aegis_user:aegis_dev_password@db:5432/aegisflow
+      - DATABASE_SYNC_URL=postgresql://aegis_user:aegis_dev_password@db:5432/aegisflow
+      - REDIS_URL=redis://redis:6379/0
+      - DEVELOPMENT_AUTH_MODE=true
+      - JWT_SECRET_KEY=dev-compose-secret-key-placeholder-32chars!!
+      - LLM_PROVIDER=mock
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - aegis-net
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: aegisflow-web
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+    networks:
+      - aegis-net
+
+  db:
+    image: postgres:16-alpine
+    container_name: aegisflow-db
+    environment:
+      - POSTGRES_USER=aegis_user
+      - POSTGRES_PASSWORD=aegis_dev_password
+      - POSTGRES_DB=aegisflow
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aegis_user -d aegisflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aegis-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: aegisflow-redis
+    networks:
+      - aegis-net
+
+networks:
+  aegis-net:
+    driver: bridge
+
+volumes:
+  pgdata:
